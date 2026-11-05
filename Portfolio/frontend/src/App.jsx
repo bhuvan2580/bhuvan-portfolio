@@ -26,7 +26,7 @@ const projects = [
     description: "A company asset workflow that brings registration, employee assignments, returns, history and dashboards into one place, replacing a manual process.",
     result: "Designed and built independently in 1 week",
     stack: ["React", "Flask", "PostgreSQL"],
-    link: "https://github.com/bhuvan2580/Abylle-Asset-Management",
+    link: "https://github.com/bhuvan2580/Assets-Management-System",
     accent: "blue",
     icon: "layers"
   },
