@@ -115,7 +115,10 @@ def contact():
 
         result = resend.Emails.send(params)
 
-        logging.info("Portfolio email accepted by Resend: %s", result)
+        if not result or not result.get("id"):
+            raise Exception(f"Resend did not return an email ID: {result}")
+
+        logging.info("Portfolio email accepted by Resend: %s", result["id"])
 
     except Exception:
         logging.exception("Resend email delivery failed.")
