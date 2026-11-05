@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 import os
 import smtplib
 import logging
+import resend
 from email.message import EmailMessage
 
 app = Flask(__name__)
@@ -64,7 +65,6 @@ def contact():
     email = str(data.get("email", "")).strip()
     message = str(data.get("message", "")).strip()
 
-    # Validate input
     if not name or not email or not message:
         return jsonify({"error": "Please complete all fields."}), 400
 
@@ -87,52 +87,40 @@ def contact():
             (name, email, message, datetime.now(timezone.utc).isoformat())
         )
 
-    # Read email configuration from Render
-    smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
-    smtp_port = int(os.getenv("SMTP_PORT", "587"))
-    smtp_user = os.getenv("SMTP_USER")
-    smtp_password = os.getenv("SMTP_PASSWORD")
-    smtp_to = os.getenv("SMTP_TO")
+    # Resend configuration
+    api_key = os.getenv("RESEND_API_KEY")
+    recipient = os.getenv("CONTACT_TO")
 
-    # Check email configuration
-    if not all([smtp_host, smtp_user, smtp_password, smtp_to]):
-        logging.error("SMTP configuration is incomplete.")
+    if not api_key or not recipient:
+        logging.error("Resend configuration is incomplete.")
         return jsonify({
-            "error": "Your message was saved, but email notification is not configured."
+            "error": "Message saved, but email configuration is incomplete."
         }), 500
 
-    # Create email
-    email_message = EmailMessage()
-    email_message["Subject"] = f"New Portfolio Message from {name}"
-    email_message["From"] = smtp_user
-    email_message["To"] = smtp_to
-    email_message["Reply-To"] = email
-
-    email_message.set_content(
-        f"""
-You have received a new message through your portfolio website.
-
-Name: {name}
-Email: {email}
-
-Message:
-{message}
-        """
-    )
-
-    # Send email using Gmail SMTP
     try:
-        with smtplib.SMTP(smtp_host, smtp_port, timeout=20) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(smtp_user, smtp_password)
-            server.send_message(email_message)
+        resend.api_key = api_key
+
+        params = {
+            "from": "Bhuvan Portfolio <onboarding@resend.dev>",
+            "to": [recipient],
+            "reply_to": email,
+            "subject": f"New Portfolio Message from {name}",
+            "text": (
+                f"New message from your portfolio\n\n"
+                f"Name: {name}\n"
+                f"Email: {email}\n\n"
+                f"Message:\n{message}"
+            )
+        }
+
+        result = resend.Emails.send(params)
+
+        logging.info("Portfolio email accepted by Resend: %s", result)
 
     except Exception:
-        logging.exception("Portfolio contact email could not be sent.")
+        logging.exception("Resend email delivery failed.")
         return jsonify({
-            "error": "Your message was saved, but email delivery failed. Please try again later."
+            "error": "Your message was saved, but email delivery failed."
         }), 502
 
     return jsonify({
