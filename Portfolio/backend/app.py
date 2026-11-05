@@ -3,6 +3,10 @@ from flask_cors import CORS
 import sqlite3
 from pathlib import Path
 from datetime import datetime, timezone
+import os
+import smtplib
+import logging
+from email.message import EmailMessage
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -55,23 +59,85 @@ def profile():
 @app.post("/api/contact")
 def contact():
     data = request.get_json(silent=True) or {}
+
     name = str(data.get("name", "")).strip()
     email = str(data.get("email", "")).strip()
     message = str(data.get("message", "")).strip()
 
+    # Validate input
     if not name or not email or not message:
         return jsonify({"error": "Please complete all fields."}), 400
+
     if len(name) > 100 or len(email) > 254 or len(message) > 5000:
         return jsonify({"error": "One or more fields are too long."}), 400
+
+    if "\n" in email or "\r" in email:
+        return jsonify({"error": "Invalid email address."}), 400
+
     if "@" not in email or "." not in email.rsplit("@", 1)[-1]:
         return jsonify({"error": "Please enter a valid email address."}), 400
 
+    # Save message in SQLite
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute(
-            "INSERT INTO messages (name, email, message, created_at) VALUES (?, ?, ?, ?)",
+            """
+            INSERT INTO messages (name, email, message, created_at)
+            VALUES (?, ?, ?, ?)
+            """,
             (name, email, message, datetime.now(timezone.utc).isoformat())
         )
-    return jsonify({"message": "Thanks for reaching out. Your message has been received."}), 201
+
+    # Read email configuration from Render
+    smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
+    smtp_port = int(os.getenv("SMTP_PORT", "587"))
+    smtp_user = os.getenv("SMTP_USER")
+    smtp_password = os.getenv("SMTP_PASSWORD")
+    smtp_to = os.getenv("SMTP_TO")
+
+    # Check email configuration
+    if not all([smtp_host, smtp_user, smtp_password, smtp_to]):
+        logging.error("SMTP configuration is incomplete.")
+        return jsonify({
+            "error": "Your message was saved, but email notification is not configured."
+        }), 500
+
+    # Create email
+    email_message = EmailMessage()
+    email_message["Subject"] = f"New Portfolio Message from {name}"
+    email_message["From"] = smtp_user
+    email_message["To"] = smtp_to
+    email_message["Reply-To"] = email
+
+    email_message.set_content(
+        f"""
+You have received a new message through your portfolio website.
+
+Name: {name}
+Email: {email}
+
+Message:
+{message}
+        """
+    )
+
+    # Send email using Gmail SMTP
+    try:
+        with smtplib.SMTP(smtp_host, smtp_port, timeout=20) as server:
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+            server.login(smtp_user, smtp_password)
+            server.send_message(email_message)
+
+    except Exception:
+        logging.exception("Portfolio contact email could not be sent.")
+        return jsonify({
+            "error": "Your message was saved, but email delivery failed. Please try again later."
+        }), 502
+
+    return jsonify({
+        "message": "Thanks for reaching out. Your message has been received!"
+    }), 201
 
 init_db()
 
