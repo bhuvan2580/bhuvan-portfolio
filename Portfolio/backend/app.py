@@ -4,10 +4,8 @@ import sqlite3
 from pathlib import Path
 from datetime import datetime, timezone
 import os
-import smtplib
 import logging
 import resend
-from email.message import EmailMessage
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
