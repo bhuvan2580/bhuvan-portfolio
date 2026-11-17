@@ -115,3 +115,41 @@
         bottom: 0;
     }
 }
+
+.chip-data {
+  position: absolute;
+  left: -8%;
+  top: 45%;
+  z-index: 3;
+}
+
+.chip-aiml {
+  position: absolute;
+  right: -12%;
+  top: 25%;
+  z-index: 3;
+}
+
+.chip-react {
+  position: absolute;
+  right: -12%;
+  bottom: 22%;
+  z-index: 3;
+}
+
+@media (max-width: 768px) {
+  .chip-data {
+    left: -2%;
+    top: 35%;
+  }
+
+  .chip-aiml {
+    right: -2%;
+    top: 10%;
+  }
+
+  .chip-react {
+    right: -2%;
+    bottom: 15%;
+  }
+}
