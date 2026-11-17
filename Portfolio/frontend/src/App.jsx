@@ -32,6 +32,17 @@ const projects = [
   },
   {
     number: "03",
+    title: "Abylle Resume Formatter",
+    type: "FULL-STACK · AI · DOCUMENT AUTOMATION",
+    description: "An AI-powered resume formatting platform that extracts candidate information from resumes in multiple formats and converts them into a predefined company template, generating downloadable Word and PDF documents.",
+    result: "Automated resume parsing and document generation",
+    stack: ["Python", "Flask", "React", "AI", "PyMuPDF", "python-docx", "ReportLab"],
+    link: "https://github.com/bhuvan2580/abylle-resume-formatter",
+    accent: "orange",
+    icon: "code"
+  },
+  {
+    number: "04",
     title: "Vyomrakshak AI",
     type: "AI · DECISION SUPPORT",
     description: "An emergency landing assistance recommender that evaluates 5–15 candidate landing sites using live factors such as fuel, terrain and weather.",
@@ -42,7 +53,7 @@ const projects = [
     icon: "spark"
   },
   {
-    number: "04",
+    number: "05",
     title: "AI Waiter System",
     type: "AUTOMATION · COMPUTER VISION",
     description: "A restaurant ordering workflow connecting customer menu selection to kitchen notification and robot delivery.",
