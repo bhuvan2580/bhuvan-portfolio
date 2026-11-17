@@ -11,7 +11,7 @@ const projects = [
   {
     number: "01",
     title: "Receivables Intelligence",
-    type: "FULL-STACK · MACHINE LEARNING",
+    type: "PYTHON-FULL-STACK · MACHINE LEARNING",
     description: "A cash-flow and risk prediction platform that estimates incoming and outgoing cash, scores invoice risk, and recommends the next action.",
     result: "ROC-AUC 0.83 · 79.8% accuracy",
     stack: ["Python", "Random Forest", "Flask", "React", "PostgreSQL"],
@@ -22,7 +22,7 @@ const projects = [
   {
     number: "02",
     title: "IT Asset Management",
-    type: "FULL-STACK · BUSINESS AUTOMATION",
+    type: "PYTHON-FULL-STACK · BUSINESS AUTOMATION",
     description: "A company asset workflow that brings registration, employee assignments, returns, history and dashboards into one place, replacing a manual process.",
     result: "Designed and built independently in 1 week",
     stack: ["React", "Flask", "PostgreSQL"],
@@ -33,7 +33,7 @@ const projects = [
   {
     number: "03",
     title: "Abylle Resume Formatter",
-    type: "FULL-STACK · AI · DOCUMENT AUTOMATION",
+    type: "PYTHON-FULL-STACK · AI · DOCUMENT AUTOMATION",
     description: "An AI-powered resume formatting platform that extracts candidate information from resumes in multiple formats and converts them into a predefined company template, generating downloadable Word and PDF documents.",
     result: "Automated resume parsing and document generation",
     stack: ["Python", "Flask", "React", "AI", "PyMuPDF", "python-docx", "ReportLab"],
@@ -208,7 +208,7 @@ function App() {
           </div>
           
           <div className="floating-chip chip-react">
-            <span>⚛</span> Full Stack Developer
+            <span>⚛</span> Python Full Stack Developer
           </div>
           
           <div className="profile-caption">
