@@ -198,11 +198,19 @@ function App() {
           <div className="floating-chip chip-python">
             <span>Py</span> Python Developer
           </div>
-
-          <div className="floating-chip chip-react">
-            <span>⚛</span> React + Flask
+          
+          <div className="floating-chip chip-data">
+            <span>📊</span> Data Science
           </div>
-
+          
+          <div className="floating-chip chip-aiml">
+            <span>✦</span> AI & Machine Learning
+          </div>
+          
+          <div className="floating-chip chip-react">
+            <span>⚛</span> Full Stack Developer
+          </div>
+          
           <div className="profile-caption">
             <span className="status-dot"></span>
             BUILD · LEARN · REPEAT
